@@ -7,6 +7,7 @@ n-fukuju氏の「[縦書きプレビュー](https://marketplace.visualstudio.com
 ## 改変箇所
 - ルビ記号に対応
     - `|文字《ルビ》`, `｜文字《ルビ》`, `[[rb: 漢字 > ルビ]]`
+    - これらの表記を、プレビュー画面上ではHTMLの`<ruby><rt>`タグに置換する
 - 縦書き・横書きの切替設定を追加(`rubi-view.preview.mode`)
 - フォントウェイトの設定を追加(`rubi-view.preview.fontweight`)
 - 「エディター中のカーソルをプレビュー画面にも表示する機能」を削除
