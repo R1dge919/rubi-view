@@ -1,15 +1,24 @@
-'use strict';
-// VSCode拡張のAPIを含むモジュール
+/**
+[vertical-writing-vsce]
+
+Copyright (c) [2020] [n-fukuju]
+
+This software is released under the MIT License.
+http://opensource.org/licenses/mit-license.php
+*/
+
+// The module 'vscode' contains the VS Code extensibility API
+// Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 
 // 拡張がアクティブ化されたタイミングで実行されるメソッド。
 // 拡張は、コマンドが実行されたときにアクティブ化される。
 export function activate(context: vscode.ExtensionContext)
 {
-    console.log("vertical-writing-vsce:: activate()")
+    console.log("ruby-preview:: activate()")
     // コマンドを登録（※ package.json の、activationEvents, commands と合わせること）
-    context.subscriptions.push(vscode.commands.registerCommand("extension.vertical", async()=>{
-        console.log("vertical-writing-vsce:: extension.vertical.");
+    context.subscriptions.push(vscode.commands.registerCommand("extension.rubi-view", async()=>{
+        console.log("ruby-preview:: extension.rubi-view.");
         PreviewPanel.show(context.extensionUri);
     }));
     // エディタ側の変更時に、プレビューに反映
@@ -24,7 +33,7 @@ export function activate(context: vscode.ExtensionContext)
     // {
     //     vscode.window.registerWebviewPanelSerializer(PreviewPanel.viewType, {
     //         async deserializeWebviewPanel(webviewPanel: vscode.WebviewPanel, state: any){
-    //             console.log(`vertical-writing-vsce:: deserialize: state: ${state}`);
+    //             console.log(`ruby-preview:: deserialize: state: ${state}`);
     //             PreviewPanel.revive(webviewPanel, context.extensionUri, vscode.window.activeTextEditor);
     //         }
     //     });
@@ -129,23 +138,32 @@ class PreviewPanel{
         let offset = this._editor? this._editor.document.offsetAt(this._editor.selection.anchor): 0;
         let text = this._editor? this._editor.document.getText(): "";
 
+        // 追加。力技でルビ記号→HTMLタグ置換
+        text = text.replace(/\||｜|\[\[rb:/g, "<ruby>"); // ルビ開始記号を、HTMLタグに置換
+        text = text.replace(/《| > /g, "<rt>"); // 同様の処理
+        text = text.replace(/》|\]\]/g, "</rt></ruby>") // 同様の処理
+
         // 更新
-        const config = vscode.workspace.getConfiguration('vertical');
+        const config = vscode.workspace.getConfiguration('rubi-view');
         let symbol = config.get<string>('cursor.symbol');
         let position = config.get<string>('cursor.position');
         let fontsize = config.get<string>('preview.fontsize');
         let fontfamily = config.get<string>('preview.fontfamily');
-        this._panel.webview.html = this._getHtmlForWebview(text, offset, (symbol?symbol:'|'), (position?position:'inner'), (fontsize?fontsize:'14px'), (fontfamily?fontfamily:''));
+
+        let fontweight = vscode.workspace.getConfiguration('rubi-view').preview.fontweight; // 追加：プレビュー用フォントウェイト
+        let mode = vscode.workspace.getConfiguration('rubi-view').preview.mode; // 追加：縦書き／横書きをユーザー側で変更できるように
+
+        this._panel.webview.html = this._getHtmlForWebview(text, offset, (symbol?symbol:'|'), (position?position:'inner'), (fontsize?fontsize:'14px'), (fontfamily?fontfamily:''), (mode?mode:''), (fontweight?fontweight:''));
     }
 
     /** WebViewに表示するHTMLを返す */
-    private _getHtmlForWebview(text:string, offset:number, cursor: string, position: string, fontsize: string, fontfamily: string)
+    private _getHtmlForWebview(text:string, offset:number, cursor: string, position: string, fontsize: string, fontfamily: string, mode: string, fontweight: string)
     {
         // エディタのカーソル位置に、カーソル記号を差し込む
-        let text2 = text.slice(0, offset) + '<span id="cursor">' + cursor + '</span>' + text.slice(offset);
+        // let text2 = text.slice(0, offset) + '<span id="cursor">' + cursor + '</span>' + text.slice(offset);
         // 改行文字で分割する
         let para = '';
-        for(let paragraph of text2.split('\n'))
+        for(let paragraph of text.split('\n'))
         {
             if(!/^\s+$/.test(paragraph))
             {
@@ -164,7 +182,7 @@ class PreviewPanel{
     <style>
         div#content{
             /* 縦書きモード*/
-            writing-mode: vertical-rl;
+            writing-mode: ${mode};
             width: 100%;
             margin: 5px;
             overflow:auto;
@@ -173,6 +191,7 @@ class PreviewPanel{
             text-indent: 1em;
             font-size: ${fontsize};
             font-family: "${fontfamily}";
+            font-weight: ${fontweight};
             margin:0;
             padding:0;
         }

@@ -1,62 +1,57 @@
 {
-  "name": "vertical-writing",
-  "displayName": "縦書きプレビュー",
-  "description": "テキストを縦書き表示する．",
-  "version": "0.0.2",
-  "publisher": "n-fukuju",
-  "icon": "images/icon.png",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/n-fukuju/vertical-writing-vsce"
-  },
-  "license": "MIT",
+  "name": "rubi-view",
+  "displayName": "rubi-view",
+  "description": "",
+  "publisher": "RR1dge",
+  "version": "0.0.1",
   "engines": {
-    "vscode": "^1.50.0"
+    "vscode": "^1.72.0"
   },
   "categories": [
     "Other"
   ],
   "activationEvents": [
-    "onCommand:extension.vertical"
+    "onCommand:extension.rubi-view"
   ],
-  "main": "./out/extension",
+  "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "extension.vertical",
-        "title": "縦書きプレビュー"
+        "command": "extension.rubi-view",
+        "title": "ルビ対応プレビュー"
       }
     ],
     "menus": {
       "editor/context": [
         {
-          "command": "extension.vertical",
+          "command": "extension.rubi-view",
           "group": "navigation"
         }
       ]
     },
     "configuration": {
-      "title": "縦書きプレビュー設定",
+      "title": "ルビ対応プレビュー設定",
       "properties": {
-        "vertical.cursor.symbol": {
-          "type": "string",
-          "default": "|",
-          "description": "カーソル位置の区切り文字"
-        },
-        "vertical.cursor.position": {
-          "type": "string",
-          "default": "inner",
-          "description": "カーソル位置。right（先頭に固定）, center（中央に固定）, left（末尾に固定）, inner（画面内：既定）, none（無視）"
-        },
-        "vertical.preview.fontsize": {
+        "rubi-view.preview.fontsize": {
           "type": "string",
           "default": "14px",
           "description": "文字サイズ"
         },
-        "vertical.preview.fontfamily": {
+        "rubi-view.preview.fontfamily": {
           "type": "string",
           "default": "",
           "description": "フォント種類"
+        },
+        "rubi-view.preview.mode":{
+          "type":"string",
+          "default":"horizontal-tb",
+          "enum": ["horizontal-tb", "vertical-rl"],
+          "enumItemLabels": ["横書き", "縦書き"]
+        },
+        "rubi-view.preview.fontweight":{
+          "type":"string",
+          "default": "normal",
+          "description": "フォントウェイト"
         }
       }
     }
@@ -65,15 +60,21 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test",
-    "package": "vsce package",
-    "installx": "code --install-extension ./vertical-writing-0.0.1.vsix"
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/mocha": "^8.0.3",
-    "@types/vscode": "^1.50.0",
-    "typescript": "^4.0.3",
-    "vsce": "^1.81.1"
+    "@types/vscode": "^1.72.0",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
+    "eslint": "^8.24.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "typescript": "^4.8.4",
+    "@vscode/test-electron": "^2.1.5"
   }
 }
