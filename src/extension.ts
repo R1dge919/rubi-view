@@ -139,9 +139,26 @@ class PreviewPanel{
         let text = this._editor? this._editor.document.getText(): "";
 
         // 追加。力技でルビ記号→HTMLタグ置換
-        text = text.replace(/\||｜|\[\[rb:/g, "<ruby>"); // ルビ開始記号を、HTMLタグに置換
-        text = text.replace(/《| > /g, "<rt>"); // 同様の処理
-        text = text.replace(/》|\]\]/g, "</rt></ruby>") // 同様の処理
+
+        // ⓪置換用の文字列を定義
+        const ruby = "<ruby>"
+        const rt = "<rt>"
+        const rt_ruby = "</rt></ruby>"
+        const hr = "<hr>"
+
+        // ①検索用の正規表現を定義
+        const reg_ruby = new RegExp(/\||｜|\[\[rb:/g)
+        const reg_rt = new RegExp(/《| > /g)
+        const reg_rt_ruby = new RegExp(/》|\]\]/g)
+        const reg_hr = new RegExp(/---/g)
+
+        // ②置換処理
+        text = text.replace(reg_ruby, ruby); // ルビ開始記号を、HTMLタグに置換
+        text = text.replace(reg_rt, rt); // 同様の処理
+        text = text.replace(reg_rt_ruby, rt_ruby) // 同様の処理
+        text = text.replace(reg_hr, hr) // 新機能：改ページ代わりに、「---」で水平方向の罫線を描画
+
+       
 
         // 更新
         const config = vscode.workspace.getConfiguration('rubi-view');
@@ -162,6 +179,7 @@ class PreviewPanel{
         // エディタのカーソル位置に、カーソル記号を差し込む
         // let text2 = text.slice(0, offset) + '<span id="cursor">' + cursor + '</span>' + text.slice(offset);
         // 改行文字で分割する
+
         let para = '';
         for(let paragraph of text.split('\n'))
         {

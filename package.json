@@ -3,7 +3,11 @@
   "displayName": "rubi-view",
   "description": "",
   "publisher": "RR1dge",
-  "version": "0.0.1",
+  "version": "0.0.3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/R1dge919/rubi-view"
+  },
   "engines": {
     "vscode": "^1.72.0"
   },
@@ -42,14 +46,20 @@
           "default": "",
           "description": "フォント種類"
         },
-        "rubi-view.preview.mode":{
-          "type":"string",
-          "default":"horizontal-tb",
-          "enum": ["horizontal-tb", "vertical-rl"],
-          "enumItemLabels": ["横書き", "縦書き"]
+        "rubi-view.preview.mode": {
+          "type": "string",
+          "default": "horizontal-tb",
+          "enum": [
+            "horizontal-tb",
+            "vertical-rl"
+          ],
+          "enumItemLabels": [
+            "横書き",
+            "縦書き"
+          ]
         },
-        "rubi-view.preview.fontweight":{
-          "type":"string",
+        "rubi-view.preview.fontweight": {
+          "type": "string",
           "default": "normal",
           "description": "フォントウェイト"
         }
