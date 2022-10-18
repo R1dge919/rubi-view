@@ -20,3 +20,5 @@ n-fukuju氏の「[縦書きプレビュー](https://marketplace.visualstudio.com
 公開
 ### 0.0.3
 三本線→水平罫線の置換を追加
+### 0.0.4
+段落の始めに字下げが入る機能を削除

@@ -206,7 +206,7 @@ class PreviewPanel{
             overflow:auto;
         }
         p{
-            text-indent: 1em;
+            text-indent: 0em;
             font-size: ${fontsize};
             font-family: "${fontfamily}";
             font-weight: ${fontweight};
